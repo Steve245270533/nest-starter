@@ -11,7 +11,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    this.logger.warn(
+    this.logger.log(
       `appName: ${this.configService.get('app', { infer: true })?.name}`,
       AppController.name,
     );
