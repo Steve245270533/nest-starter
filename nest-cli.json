@@ -8,6 +8,8 @@
       {"include": "../config/*.json", "outDir": "./dist/config", "watchAssets": true}
     ],
     "watchAssets": true,
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "builder": "swc",
+    "typeCheck": true
   }
 }
