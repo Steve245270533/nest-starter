@@ -6,6 +6,7 @@ const AppConfigSchema = z.object({
   logger: z.boolean(),
   cors: z.boolean(),
   prefix: z.string(),
+  version: z.array(z.string()).optional(),
 });
 
 export type AppConfig = z.infer<typeof AppConfigSchema>;

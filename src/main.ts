@@ -4,6 +4,7 @@ import { AllExceptionFilter } from './commons/filters/all-exception/all-exceptio
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from './commons/config/configuration';
+import { VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,9 +23,13 @@ async function bootstrap() {
     app.enableCors();
   }
 
-  // 全局请求前缀
-  console.log(AppConfig.prefix);
+  // 全局接口请求前缀
   app.setGlobalPrefix(AppConfig.prefix);
+  // 全局接口版本号
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: AppConfig.version ?? VERSION_NEUTRAL,
+  });
 
   await app.listen(process.env.PORT ?? 8080);
 }

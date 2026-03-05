@@ -1,4 +1,4 @@
-import { Controller, Get, Logger } from '@nestjs/common';
+import { Controller, Get, Logger, Version } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from './commons/config/configuration';
 
@@ -16,5 +16,11 @@ export class AppController {
       AppController.name,
     );
     return 'hello';
+  }
+
+  @Get()
+  @Version('2')
+  getHelloV2() {
+    return 'hello-v2';
   }
 }
