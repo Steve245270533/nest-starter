@@ -1,11 +1,10 @@
-import { type INestApplication, Logger, Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
   utilities as nestWinstonModuleUtilities,
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import 'winston-daily-rotate-file';
 import { Configuration } from '../config/configuration';
 import { DailyRotateFile } from 'winston/lib/winston/transports';
