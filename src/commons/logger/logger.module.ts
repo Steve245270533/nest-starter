@@ -5,9 +5,8 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
-import 'winston-daily-rotate-file';
+import DailyRotateFile from 'winston-daily-rotate-file';
 import { Configuration } from '../config/configuration';
-import { DailyRotateFile } from 'winston/lib/winston/transports';
 
 function createDailyRotateTransport(level: string, fileName: string) {
   return new DailyRotateFile({
