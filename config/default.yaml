@@ -1,6 +1,8 @@
 app:
   name: nest-starter
   logger: true
+  cors: true
+  prefix: /api
 db:
   username: root
   password: password

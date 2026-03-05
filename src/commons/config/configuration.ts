@@ -3,6 +3,8 @@ import config from 'config';
 export interface AppConfig {
   name: string;
   logger: boolean;
+  cors: boolean;
+  prefix: string;
 }
 
 export interface DbConfig {

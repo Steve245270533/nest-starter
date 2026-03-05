@@ -7,7 +7,7 @@ import {
 import * as winston from 'winston';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import 'winston-daily-rotate-file';
-import { Configuration } from './config/configuration';
+import { Configuration } from '../config/configuration';
 import { DailyRotateFile } from 'winston/lib/winston/transports';
 
 function createDailyRotateTransport(level: string, fileName: string) {
@@ -59,7 +59,3 @@ function createDailyRotateTransport(level: string, fileName: string) {
   exports: [Logger],
 })
 export class LoggerModule {}
-
-export function useLogger(app: INestApplication) {
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-}
