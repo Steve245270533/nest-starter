@@ -1,5 +1,6 @@
-import { Controller, Get, Logger, Version } from '@nestjs/common';
+import { Controller, Get, Logger, Query, Version } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Configuration } from './commons/config/configuration';
 
 @Controller()
@@ -10,12 +11,19 @@ export class AppController {
   ) {}
 
   @Get()
-  getHello(): string {
+  @ApiOperation({ summary: 'Get hello message' })
+  @ApiQuery({ name: 'name', required: false, description: '用户名称' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return hello message',
+    schema: { example: { code: 0, msg: 'hello' } },
+  })
+  getHello(@Query('name') name?: string): { code: number; msg: string } {
     this.logger.log(
-      `appName: ${this.configService.get('app', { infer: true })?.name}`,
+      `appName: ${this.configService.get('app', { infer: true })?.name}, name: ${name}`,
       AppController.name,
     );
-    return 'hello';
+    return { code: 0, msg: `hello ${name}` };
   }
 
   @Get()

@@ -5,6 +5,7 @@ import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from './commons/config/configuration';
 import { VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
+import { setupSwagger } from './commons/swagger/setupSwagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -30,7 +31,10 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: AppConfig.version ?? VERSION_NEUTRAL,
   });
-  console.log(VERSION_NEUTRAL);
+
+  // swagger文档
+  setupSwagger(app);
+
   await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
