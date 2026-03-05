@@ -33,7 +33,7 @@ async function bootstrap() {
   });
 
   // swagger文档
-  setupSwagger(app);
+  await setupSwagger(app);
 
   await app.listen(process.env.PORT ?? 8080);
 }
