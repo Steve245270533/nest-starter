@@ -30,7 +30,7 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: AppConfig.version ?? VERSION_NEUTRAL,
   });
-
+  console.log(VERSION_NEUTRAL);
   await app.listen(process.env.PORT ?? 8080);
 }
 bootstrap();
