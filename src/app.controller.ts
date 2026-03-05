@@ -11,8 +11,8 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    this.logger.log(
-      `port: ${this.configService.get('db', { infer: true })?.port}`,
+    this.logger.warn(
+      `appName: ${this.configService.get('app', { infer: true })?.name}`,
       AppController.name,
     );
     return 'hello';

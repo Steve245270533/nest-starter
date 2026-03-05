@@ -1,5 +1,6 @@
 app:
   name: nest-starter
+  logger: true
 db:
   username: root
   password: password

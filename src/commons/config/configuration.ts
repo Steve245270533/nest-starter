@@ -2,6 +2,7 @@ import config from 'config';
 
 export interface AppConfig {
   name: string;
+  logger: boolean;
 }
 
 export interface DbConfig {
