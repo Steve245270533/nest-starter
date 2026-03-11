@@ -1,42 +1,70 @@
 # Nest Starter Template
 
-这是一个基于 [NestJS](https://nestjs.com/) 的后端项目启动模板，旨在提供一个开箱即用的开发环境。
+这是一个基于 [NestJS](https://nestjs.com/) 的后端项目启动模板，目标是提供一个开箱即用、偏向生产实践的基础工程骨架。
 
-本模板在 NestJS 官方基础之上，集成了生产环境常用的**日志系统**、**配置管理**以及**高性能编译工具 SWC**，帮助开发者快速搭建健壮的后端服务。
+该模板已集成：SWC 编译、Winston 日志（含日志轮转）、node-config 多环境配置（结合 Zod 校验）、Swagger + Knife4j 文档，以及常用的全局中间件能力（前缀、版本、CORS、验证管道、异常过滤器等）。
 
 ## ✨ 主要特性
 
-- **🚀 高性能编译 (SWC)**
-  - 集成 `@swc/core` 和 `@swc/cli`，使用 SWC 替代默认的 TypeScript 编译器。
-  - 在开发模式下 (`npm run start:dev`) 启用 SWC 编译 (`-b swc`)，显著提升编译速度和热更新效率。
+- **🚀 SWC 编译（Nest Builder）**
+  - `nest-cli.json` 已设置 `compilerOptions.builder = "swc"`，构建/开发均走 SWC（配合 `.swcrc`）。
+  - `compilerOptions.typeCheck = true`，构建时保留 TypeScript 类型检查。
 
-- **📝 增强的日志系统 (Winston)**
-  - 集成 `nest-winston` 和 `winston`。
-  - **多渠道输出**：同时支持控制台高亮输出和文件日志。
-  - **日志轮转**：集成 `winston-daily-rotate-file`，自动按日期分割日志文件，支持自动清理旧日志（默认保留 14 天）。
-  - **上下文感知**：日志自动携带应用名称（从配置中获取）和时间戳。
+- **📝 日志系统（nest-winston + winston）**
+  - 控制台：Nest Like 格式输出，带时间戳与应用名（来源于 `app.name` 配置）。
+  - 文件：按天轮转写入 `logs/` 目录，默认保留 14 天。
+  - 开关：通过 `app.logger` 控制是否写文件日志（控制台日志始终输出）。
 
-- **⚙️ 强大的配置管理 (Config)**
-  - 结合 `@nestjs/config` 和 `node-config`。
-  - **类型安全**：通过 TypeScript 接口定义配置结构，提供完善的类型提示。
-  - **多环境支持**：利用 `node-config` 的机制，轻松管理 `default`, `development`, `production` 等多环境配置（支持 YAML/JSON 等格式）。
-  - **全局注入**：配置模块注册为全局模块，无需在每个模块中重复导入。
+- **⚙️ 配置管理（@nestjs/config + node-config + zod）**
+  - 配置文件位于 `config/`，支持 `default.yaml` + `development.yaml` / `production.yaml` 合并。
+  - 通过 Zod 对 `app`、`db` 配置做运行时校验，配置非法会在启动时直接抛错。
+  - `ConfigModule` 已 `isGlobal: true` 全局注入，无需重复导入。
+
+- **📚 接口文档（Swagger + Knife4j）**
+  - Swagger UI：`/swagger`
+  - Swagger JSON：`/swagger-json`
+  - 已集成 `nestjs-knife4j-plus`，默认使用 Swagger JSON 作为数据源。
+
+- **🌍 全局 Web 行为（main.ts）**
+  - 全局异常过滤器：`HttpExceptionsFilter` 统一 `HttpException` 的响应结构。
+  - 跨域：根据 `app.cors` 配置决定是否启用。
+  - 全局前缀：`app.prefix`（默认 `/api`）。
+  - URI 版本：`app.version` 可选（启用 URI Versioning）。
+  - 全局验证管道：`ValidationPipe({ transform: true, whitelist: true })`。
 
 ## 📦 目录结构
 
 ```
 src/
-├── commons/                 # 通用模块
-│   ├── config/              # 配置模块
-│   │   ├── config.module.ts # ConfigModule 定义
-│   │   └── configuration.ts # 配置加载与类型定义
-│   └── logger.module.ts     # 日志模块（Winston 配置）
-├── app.module.ts            # 根模块
-└── main.ts                  # 入口文件
-config/                      # 配置文件目录 (node-config)
-├── default.yaml             # 默认配置
-├── development.yaml         # 开发环境配置
-└── production.yaml          # 生产环境配置
+├── commons/
+│   ├── config/
+│   │   ├── config.module.ts
+│   │   └── configuration.ts
+│   ├── dto/
+│   │   └── index.ts
+│   ├── filters/
+│   │   ├── all-exception/
+│   │   │   └── all-exception.filter.ts
+│   │   └── http-exception/
+│   │       └── http-exception.filter.ts
+│   ├── logger/
+│   │   └── logger.module.ts
+│   └── swagger/
+│       ├── api-ok-response-data.ts
+│       └── setupSwagger.ts
+├── user/
+│   ├── dto/
+│   │   ├── create-user.dto.ts
+│   │   └── user.dto.ts
+│   ├── user.controller.ts
+│   └── user.module.ts
+├── app.controller.ts
+├── app.module.ts
+└── main.ts
+config/
+├── default.yaml
+├── development.yaml
+└── production.yaml
 ```
 
 ## 🛠️ 快速开始
@@ -53,46 +81,101 @@ yarn install
 
 ### 2. 运行项目
 
-**开发模式（使用 SWC 加速）：**
-
 ```bash
 npm run start:dev
 ```
 
-**生产模式：**
+默认监听端口为 `8080`，也可通过环境变量 `PORT` 覆盖：
 
 ```bash
-npm run build
-npm run start:prod
+PORT=3000 npm run start:dev
 ```
 
-### 3. 配置说明
+### 3. 示例接口
 
-项目配置位于根目录下的 `config/` 文件夹中。你可以根据需要在 `src/commons/config/configuration.ts` 中扩展配置的类型定义。
+在默认配置（`app.prefix: /api`）下：
 
-示例 `config/default.yaml`:
+- 获取用户列表：`GET http://localhost:8080/api/user/all`
+- 创建用户：`POST http://localhost:8080/api/user/create`
+
+示例请求体：
+
+```json
+{ "name": "steve", "age": 27 }
+```
+
+### 4. Swagger 文档
+
+启动后访问：
+
+- Swagger UI：`http://localhost:8080/swagger`
+- Swagger JSON：`http://localhost:8080/swagger-json`
+
+## ⚙️ 配置说明
+
+配置目录为根目录 `config/`，由 `node-config` 负责加载与合并。默认 `start:dev` / `start:prod` 已分别设置：
+
+- `start:dev`：`NODE_ENV=development`
+- `start:prod`：`NODE_ENV=production`
+
+示例配置（与当前模板保持一致）：
+
+`config/default.yaml`
 
 ```yaml
 app:
-  name: nest-demo
+  name: nest-starter
+  logger: true
+  cors: true
+  prefix: /api
+  # version: ["1"]
 db:
   username: root
   password: password
 ```
 
-在代码中使用配置：
+`config/development.yaml`
 
-```typescript
-// 注入 ConfigService
-constructor(private configService: ConfigService<Configuration>) {}
-
-// 获取配置（支持类型推断）
-const dbHost = this.configService.get('db', { infer: true }).host;
+```yaml
+db:
+  port: 3306
+  host: localhost
 ```
 
-### 4. 日志使用
+说明：
 
-日志模块已在 `AppModule` 中全局注册，并替换了 NestJS 默认的 Logger。
+- `app.version` 为可选数组，启用后会开启 URI 版本能力（例如 `["1"]`）。如需对某个控制器/路由声明版本，可使用 `@Version('1')`。
+- `configuration.ts` 使用 Zod 校验配置字段，缺少必填字段会在启动时抛错。
+
+在代码中使用配置（支持类型推断）：
+
+```typescript
+import { ConfigService } from '@nestjs/config';
+import { Configuration } from '@/commons/config/configuration';
+
+constructor(private readonly configService: ConfigService<Configuration>) {}
+
+const appConfig = this.configService.get('app', { infer: true })!;
+```
+
+## 🧾 统一响应与 Swagger 装饰器
+
+模板内置了常用响应 DTO：
+
+- `ResponseDTO<T>`
+- `PaginationResponseDTO<T>`
+
+并提供了 Swagger 装饰器简化响应体定义：
+
+- `ApiOkResponseData(Model)`：返回单对象
+- `ApiOkResponseDataArray(Model)`：返回数组
+- `ApiOkResponsePaginationData(Model)`：返回分页结构
+
+参考示例：[user.controller.ts](src/user/user.controller.ts)
+
+## 🧩 日志使用
+
+日志模块已在 [app.module.ts](src/app.module.ts) 全局注册，并在 [main.ts](src/main.ts) 中替换 Nest 默认 Logger：
 
 ```typescript
 import { Logger } from '@nestjs/common';
@@ -107,4 +190,4 @@ export class MyService {
 }
 ```
 
-日志文件将自动生成在项目根目录的 `logs/` 文件夹下。
+若 `app.logger: true`，文件日志默认输出到项目根目录 `logs/`。
