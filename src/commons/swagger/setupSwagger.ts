@@ -12,14 +12,10 @@ export async function setupSwagger(app: INestApplication) {
 
   SwaggerModule.setup('swagger', app, document);
 
-  await knife4jSetup(
-    app,
-    [
-      {
-        name: '1.0 version',
-        url: '../swagger-json',
-      },
-    ],
-    'swagger',
-  );
+  await knife4jSetup(app, [
+    {
+      name: '1.0 version',
+      url: 'swagger-json',
+    },
+  ]);
 }

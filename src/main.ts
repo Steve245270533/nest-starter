@@ -1,6 +1,7 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AllExceptionFilter } from './commons/filters/all-exception/all-exception.filter';
+// import { AllExceptionFilter } from './commons/filters/all-exception/all-exception.filter';
+import { HttpExceptionsFilter } from './commons/filters/http-exception/http-exception.filter';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from './commons/config/configuration';
@@ -14,10 +15,13 @@ async function bootstrap() {
 
   // 全局Logger
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
-  const httpAdapter = app.get(HttpAdapterHost);
+  // const httpAdapter = app.get(HttpAdapterHost);
 
   // 全局Filter
-  app.useGlobalFilters(new AllExceptionFilter(httpAdapter));
+  app.useGlobalFilters(
+    // new AllExceptionFilter(httpAdapter),
+    new HttpExceptionsFilter(),
+  );
 
   // 跨域
   if (AppConfig.cors === true) {
@@ -37,4 +41,4 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 8080);
 }
-bootstrap();
+void bootstrap();
