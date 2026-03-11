@@ -17,9 +17,17 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const message: string | string[] = (exception.getResponse() as any).message;
+
     const res: ResponseDTO<null> = {
       code: status,
-      msg: exception.message || exception.name,
+      msg:
+        typeof message === 'string'
+          ? message
+          : message.length !== 0
+            ? message[0]
+            : exception.name,
       data: null,
     };
 

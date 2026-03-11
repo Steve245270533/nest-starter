@@ -5,7 +5,11 @@ import { HttpExceptionsFilter } from './commons/filters/http-exception/http-exce
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from './commons/config/configuration';
-import { VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
+import {
+  ValidationPipe,
+  VERSION_NEUTRAL,
+  VersioningType,
+} from '@nestjs/common';
 import { setupSwagger } from './commons/swagger/setupSwagger';
 
 async function bootstrap() {
@@ -35,6 +39,9 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: AppConfig.version ?? VERSION_NEUTRAL,
   });
+
+  // 全局验证管道
+  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
 
   // swagger文档
   await setupSwagger(app);
