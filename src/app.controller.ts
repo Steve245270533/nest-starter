@@ -2,6 +2,8 @@ import { Controller, Get, Logger, Query, Version } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Configuration } from './commons/config/configuration';
+import { ResponseDTO } from '@/commons/dto';
+import { Result } from '@/commons/utils/result';
 
 @Controller()
 export class AppController {
@@ -16,14 +18,14 @@ export class AppController {
   @ApiResponse({
     status: 200,
     description: 'Return hello message',
-    schema: { example: { code: 0, msg: 'hello' } },
+    type: ResponseDTO,
   })
-  getHello(@Query('name') name?: string): { code: number; msg: string } {
+  getHello(@Query('name') name?: string): ResponseDTO<string> {
     this.logger.log(
       `appName: ${this.configService.get('app', { infer: true })?.name}, name: ${name}`,
       AppController.name,
     );
-    return { code: 0, msg: `hello ${name}` };
+    return Result.ok(`hello ${name}`);
   }
 
   @Get()
