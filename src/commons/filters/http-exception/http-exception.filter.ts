@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Result } from '@/commons/utils/result';
+import { ZodValidationException } from 'nestjs-zod';
 
 /**
  * HTTP异常过滤器
@@ -17,8 +18,22 @@ export class HttpExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const message: string | string[] = (exception.getResponse() as any).message;
+    let exceptionResponse = exception.getResponse();
+
+    // 判断如果是由 nestjs-zod 抛出的数据校验异常
+    if (exception instanceof ZodValidationException) {
+      exceptionResponse = {
+        statusCode: status,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+        message: exception.getResponse()?.errors?.map((e) => e.message),
+      };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const message: string | string[] =
+      typeof exceptionResponse === 'string'
+        ? exceptionResponse
+        : (exceptionResponse as any).message;
 
     const msg =
       typeof message === 'string'

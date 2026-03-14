@@ -5,12 +5,9 @@ import { HttpExceptionsFilter } from './commons/filters/http-exception/http-exce
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { ConfigService } from '@nestjs/config';
 import { Configuration } from './commons/config/configuration';
-import {
-  ValidationPipe,
-  VERSION_NEUTRAL,
-  VersioningType,
-} from '@nestjs/common';
+import { VERSION_NEUTRAL, VersioningType } from '@nestjs/common';
 import { setupSwagger } from './commons/swagger/setupSwagger';
+import { ZodValidationPipe, cleanupOpenApiDoc } from 'nestjs-zod';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -41,10 +38,10 @@ async function bootstrap() {
   });
 
   // 全局验证管道
-  app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  app.useGlobalPipes(new ZodValidationPipe());
 
   // swagger文档
-  await setupSwagger(app);
+  await setupSwagger(app, cleanupOpenApiDoc);
 
   await app.listen(process.env.PORT ?? 8080);
 }

@@ -6,7 +6,7 @@ import { Result } from '@/commons/utils/result';
 import {
   ApiOkResponseData,
   ApiOkResponsePaginationData,
-} from '@/commons/swagger/api-ok-response-data';
+} from '@/commons/swagger';
 import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('user')
