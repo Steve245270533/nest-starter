@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   StandardSchemaValidationPipe,
   VERSION_NEUTRAL,
   VersioningType,
@@ -20,6 +21,11 @@ export async function configureApp(app: INestApplication) {
     defaultVersion: settings.version ?? VERSION_NEUTRAL,
   });
   app.useGlobalFilters(new HttpExceptionsFilter());
-  app.useGlobalPipes(new StandardSchemaValidationPipe());
+  app.useGlobalPipes(
+    new StandardSchemaValidationPipe({
+      exceptionFactory: (issues) =>
+        new BadRequestException(issues[0]?.message ?? '请求参数校验失败'),
+    }),
+  );
   await setupSwagger(app);
 }
