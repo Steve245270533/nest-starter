@@ -18,6 +18,8 @@ pnpm start:dev
 
 默认端口为 `8080`，可以用 `PORT` 覆盖。Knife4j UI 位于 `/doc.html`，Swagger UI 位于 `/swagger`，两者共用 `/swagger-json`。文档生成时会将 Zod 生成的内联 JSON 对象提取为 `components.schemas` 和 `$ref`，以兼容 Knife4j 的请求体与嵌套响应解析；运行时的 Zod 校验不受影响。文档入口不跟随应用前缀。应用前缀、CORS、URI 版本和日志配置位于 `config/default.yaml`。Winston 文件日志写入 `logs/`。
 
+Schema 可通过 Zod 的 `.meta({ title: 'User' })` 指定文档模型名称；`normalizeSchemas` 优先使用该名称，并复用同名且结构一致的模型。未指定名称时，仍按接口和字段路径生成名称；同名但结构不同的模型会添加数字后缀，避免覆盖。
+
 ## 依赖兼容性
 
 使用 ESLint 10、SWC 1.16、config 5 和 dotenv 18。config 5 的 YAML 解析器需要显式安装，项目已添加 `yaml`，继续使用现有 YAML 配置。

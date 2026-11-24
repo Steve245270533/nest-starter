@@ -1,3 +1,4 @@
+import { isDeepStrictEqual } from 'node:util';
 import type {
   OpenAPIObject,
   ReferenceObject,
@@ -15,6 +16,7 @@ export function normalizeSchemas(document: OpenAPIObject): OpenAPIObject {
     extract = true,
   ): SchemaObject | ReferenceObject {
     if ('$ref' in schema) return schema;
+    name = schema.title ?? name;
 
     if (schema.properties) {
       for (const [key, value] of Object.entries(schema.properties)) {
@@ -44,6 +46,9 @@ export function normalizeSchemas(document: OpenAPIObject): OpenAPIObject {
     const base = name.replace(/[^a-zA-Z0-9._-]/g, '_');
     let modelName = base;
     for (let suffix = 2; Object.hasOwn(models, modelName); suffix++) {
+      if (isDeepStrictEqual(models[modelName], schema)) {
+        return { $ref: `#/components/schemas/${modelName}` };
+      }
       modelName = `${base}_${suffix}`;
     }
     models[modelName] = schema;
