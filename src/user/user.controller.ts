@@ -15,6 +15,7 @@ import {
   ApiNoContentResponse,
   ApiOkResponse,
   ApiTags,
+  ApiOperation,
 } from '@nestjs/swagger';
 import { Result } from '../commons/utils/result.js';
 import { CreateUserSchema, type CreateUserDto } from './dto/create-user.dto.js';
@@ -34,6 +35,7 @@ export class UserController {
   constructor(private readonly users: UserService) {}
 
   @Get('all')
+  @ApiOperation({ summary: '获取用户列表' })
   @ApiOkResponse({ standardSchema: UserPageResponseSchema })
   async findAll(@Query({ schema: UserQuerySchema }) query: UserQueryDto) {
     const { list, total } = await this.users.findAll(query);
@@ -41,6 +43,7 @@ export class UserController {
   }
 
   @Post('create')
+  @ApiOperation({ summary: '创建用户' })
   @ApiCreatedResponse({ standardSchema: UserResponseSchema })
   async create(@Body({ schema: CreateUserSchema }) body: CreateUserDto) {
     return Result.ok(
@@ -51,12 +54,14 @@ export class UserController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: '获取用户详情' })
   @ApiOkResponse({ standardSchema: UserResponseSchema })
   async findOne(@Param('id', { schema: UserIdSchema }) id: UserIdDto) {
     return Result.ok(await this.users.findOne(id));
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: '更新用户' })
   @ApiOkResponse({ standardSchema: UserResponseSchema })
   async update(
     @Param('id', { schema: UserIdSchema }) id: UserIdDto,
@@ -66,6 +71,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: '删除用户' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse()
   async remove(@Param('id', { schema: UserIdSchema }) id: UserIdDto) {
