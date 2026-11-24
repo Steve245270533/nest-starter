@@ -1,26 +1,29 @@
 import { Controller, Get, Logger, Query, Version } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Configuration } from './commons/config/configuration';
-import { ResponseDTO } from '@/commons/dto';
-import { Result } from '@/commons/utils/result';
+import { ApiOkResponse } from '@nestjs/swagger';
+import { z } from 'zod';
+import type { Configuration } from './commons/config/configuration.js';
+import { responseSchema } from './commons/dto/index.js';
+import { Result } from './commons/utils/result.js';
+
+const HelloQuerySchema = z.object({
+  name: z.string().describe('用户名称').optional(),
+});
+const HelloResponseSchema = responseSchema(z.string());
 
 @Controller()
 export class AppController {
   constructor(
-    private logger: Logger,
+    private readonly logger: Logger,
     private readonly configService: ConfigService<Configuration>,
   ) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get hello message' })
-  @ApiQuery({ name: 'name', required: false, description: '用户名称' })
-  @ApiResponse({
-    status: 200,
-    description: 'Return hello message',
-    type: ResponseDTO,
-  })
-  getHello(@Query('name') name?: string): ResponseDTO<string> {
+  @ApiOkResponse({ standardSchema: HelloResponseSchema })
+  getHello(
+    @Query({ schema: HelloQuerySchema })
+    { name }: z.infer<typeof HelloQuerySchema>,
+  ) {
     this.logger.log(
       `appName: ${this.configService.get('app', { infer: true })?.name}, name: ${name}`,
       AppController.name,
@@ -30,6 +33,7 @@ export class AppController {
 
   @Get()
   @Version('2')
+  @ApiOkResponse({ standardSchema: z.string() })
   getHelloV2() {
     return 'hello-v2';
   }

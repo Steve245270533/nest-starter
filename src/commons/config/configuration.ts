@@ -9,28 +9,10 @@ const AppConfigSchema = z.object({
   version: z.array(z.string()).optional(),
 });
 
-export type AppConfig = z.infer<typeof AppConfigSchema>;
-
-const DBSchema = z.object({
-  username: z.string(),
-  password: z.string(),
-  port: z.number(),
-  host: z.string(),
-});
-
-export type DbConfig = z.infer<typeof DBSchema>;
-
 export interface Configuration {
-  app: AppConfig;
-  db: DbConfig;
+  app: z.infer<typeof AppConfigSchema>;
 }
 
 export default function configuration(): Configuration {
-  const app = AppConfigSchema.parse(config.get<AppConfig>('app'));
-  const db = DBSchema.parse(config.get<DbConfig>('db'));
-
-  return {
-    app,
-    db,
-  };
+  return { app: AppConfigSchema.parse(config.get('app')) };
 }

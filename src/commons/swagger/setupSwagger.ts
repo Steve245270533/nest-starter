@@ -1,28 +1,15 @@
-import { INestApplication } from '@nestjs/common';
-import { SwaggerModule, DocumentBuilder, OpenAPIObject } from '@nestjs/swagger';
+import type { INestApplication } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { knife4jSetup } from 'nestjs-knife4j-plus';
 
-export async function setupSwagger(
-  app: INestApplication,
-  cleanupOpenApiDocFn?: (doc: OpenAPIObject) => OpenAPIObject,
-) {
+export async function setupSwagger(app: INestApplication) {
   const options = new DocumentBuilder()
-    .setTitle('Nest接口文档')
-    .setDescription('The API description')
+    .setTitle('Nest Starter API')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, options);
-
-  SwaggerModule.setup(
-    'swagger',
-    app,
-    cleanupOpenApiDocFn ? cleanupOpenApiDocFn(document) : document,
+  SwaggerModule.setup('swagger', app, () =>
+    SwaggerModule.createDocument(app, options),
   );
 
-  await knife4jSetup(app, [
-    {
-      name: '1.0 version',
-      url: 'swagger-json',
-    },
-  ]);
+  await knife4jSetup(app, [{ name: 'Nest Starter API', url: '/swagger-json' }]);
 }

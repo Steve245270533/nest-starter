@@ -1,30 +1,28 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { z } from 'zod';
 
-/**
- * 普通响应体DTO
- */
-export class ResponseDTO<T> {
-  @ApiProperty({ description: '状态码', example: 200 })
-  code: number;
-  @ApiProperty({ description: '信息', example: 'success' })
-  msg: string;
-  @ApiProperty({ description: '数据' })
-  data: T;
+export function responseSchema<T extends z.ZodType>(data: T) {
+  return z.object({
+    code: z.number().int().describe('状态码'),
+    msg: z.string().describe('消息'),
+    data,
+  });
 }
 
-export class PaginationDataDTO<T> {
-  @ApiProperty({ description: '列表', isArray: true })
-  list: T[];
-  @ApiProperty({ description: '总数', example: 0 })
-  total: number;
+export function paginationSchema<T extends z.ZodType>(item: T) {
+  return z.object({
+    list: z.array(item),
+    total: z.number().int().nonnegative(),
+  });
 }
 
-/**
- * 分页响应体DTO
- */
-export class PaginationResponseDTO<T> extends ResponseDTO<
-  PaginationDataDTO<T>
-> {
-  @ApiProperty({ description: '数据', type: () => PaginationDataDTO })
-  declare data: PaginationDataDTO<T>;
-}
+export type ResponseSchema<T extends z.ZodType> = ReturnType<
+  typeof responseSchema<T>
+>;
+export type PaginationSchema<T extends z.ZodType> = ReturnType<
+  typeof paginationSchema<T>
+>;
+
+export type ResponseDTO<T> = z.output<ResponseSchema<z.ZodType<T>>>;
+export type PaginationResponseDTO<T> = z.output<
+  ResponseSchema<PaginationSchema<z.ZodType<T>>>
+>;

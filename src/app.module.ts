@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { LoggerModule } from './commons/logger/logger.module';
-import { ConfigModule } from './commons/config/config.module';
-import { UserModule } from './user/user.module';
+import { AppController } from './app.controller.js';
+import { LoggerModule } from './commons/logger/logger.module.js';
+import { ConfigModule } from './commons/config/config.module.js';
+import { UserModule } from './user/user.module.js';
 
 @Module({
   imports: [ConfigModule, LoggerModule, UserModule],

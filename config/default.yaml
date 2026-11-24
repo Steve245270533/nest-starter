@@ -4,6 +4,3 @@ app:
   cors: true
   prefix: /api
   # version: ["1"]
-db:
-  username: root
-  password: password

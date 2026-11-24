@@ -6,8 +6,10 @@
       "syntax": "typescript",
       "decorators": true,
       "dynamicImport": true
-    },
-    "baseUrl": "./"
+    }
   },
-  "minify": false
+  "minify": false,
+  "module": {
+    "type": "es6"
+  }
 }

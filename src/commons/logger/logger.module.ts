@@ -6,7 +6,7 @@ import {
 } from 'nest-winston';
 import * as winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
-import { Configuration } from '../config/configuration';
+import type { Configuration } from '../config/configuration.js';
 
 function createDailyRotateTransport(level: string, fileName: string) {
   return new DailyRotateFile({
