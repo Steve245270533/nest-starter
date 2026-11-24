@@ -34,7 +34,7 @@ import { UserService } from './user.service.js';
 export class UserController {
   constructor(private readonly users: UserService) {}
 
-  @Get('all')
+  @Get('')
   @ApiOperation({ summary: '获取用户列表' })
   @ApiOkResponse({ standardSchema: UserPageResponseSchema })
   async findAll(@Query({ schema: UserQuerySchema }) query: UserQueryDto) {

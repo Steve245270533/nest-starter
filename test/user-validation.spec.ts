@@ -4,11 +4,11 @@ import type { INestApplication } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { configureApp } from '../commons/configure-app.js';
-import { CreateUserSchema } from './dto/create-user.dto.js';
-import { UpdateUserSchema } from './dto/update-user.dto.js';
-import { UserController } from './user.controller.js';
-import { UserService } from './user.service.js';
+import { configureApp } from '../src/commons/configure-app.js';
+import { CreateUserSchema } from '../src/user/dto/create-user.dto.js';
+import { UpdateUserSchema } from '../src/user/dto/update-user.dto.js';
+import { UserController } from '../src/user/user.controller.js';
+import { UserService } from '../src/user/user.service.js';
 
 void describe('User validation messages', () => {
   let app: INestApplication<Parameters<typeof request>[0]>;

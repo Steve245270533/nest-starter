@@ -122,7 +122,20 @@ void describe('Nest starter (e2e)', () => {
     const result = await request(app.getHttpServer())
       .get('/swagger-json')
       .expect(200);
-    const { paths } = result.body as OpenAPIObject;
+    const document = result.body as OpenAPIObject;
+    // Assert schema semantics regardless of whether they are inline or referenced.
+    const paths = JSON.parse(
+      JSON.stringify(document.paths, (_key, value: unknown) => {
+        if (value && typeof value === 'object' && '$ref' in value) {
+          const ref = String(value.$ref);
+          const prefix = '#/components/schemas/';
+          if (ref.startsWith(prefix)) {
+            return document.components?.schemas?.[ref.slice(prefix.length)];
+          }
+        }
+        return value;
+      }),
+    ) as OpenAPIObject['paths'];
     assert.partialDeepStrictEqual(paths, {
       '/api': {
         get: { parameters: [{ name: 'name', required: false, in: 'query' }] },
