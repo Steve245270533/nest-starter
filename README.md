@@ -16,9 +16,9 @@ pnpm start:dev
 
 `DATABASE_URL` 形如 `mysql://USER:PASSWORD@127.0.0.1:3306/nest_starter`。密码中的 URL 保留字符需要百分号编码。`pnpm db:deploy` 应用仓库中已有的迁移。修改 Prisma 数据模型后，用 `pnpm db:migrate --name <name>` 创建开发迁移，再运行 `pnpm prisma:generate` 更新客户端。安装依赖时也会生成客户端，生成目录为 `prisma/generated/`（不提交 Git）。构建产物保留目录结构，应用入口为 `dist/src/main.js`。
 
-默认端口为 `8080`，可以用 `PORT` 覆盖。Knife4j UI 位于 `/doc.html`，Swagger UI 位于 `/swagger`，两者共用 `/swagger-json`。文档生成时会将 Zod 生成的内联 JSON 对象提取为 `components.schemas` 和 `$ref`，以兼容 Knife4j 的请求体与嵌套响应解析；运行时的 Zod 校验不受影响。文档入口不跟随应用前缀。应用前缀、CORS、URI 版本和日志配置位于 `config/default.yaml`。Winston 文件日志写入 `logs/`。
+默认端口为 `8080`，可以用 `PORT` 覆盖。Knife4j UI 位于 `/doc.html`，Swagger UI 位于 `/swagger`，两者共用 `/swagger-json`。命名业务模型通过 Zod 与 Swagger 的原生转换生成 `components.schemas` 和 `$ref`，以兼容 Knife4j 的请求体与嵌套响应解析；运行时的 Zod 校验不受影响。文档入口不跟随应用前缀。应用前缀、CORS、URI 版本和日志配置位于 `config/default.yaml`。Winston 文件日志写入 `logs/`。
 
-Schema 可通过 Zod 的 `.meta({ title: 'User' })` 指定文档模型名称；`normalizeSchemas` 优先使用该名称，并复用同名且结构一致的模型。未指定名称时，仍按接口和字段路径生成名称；同名但结构不同的模型会添加数字后缀，避免覆盖。
+需要在文档中引用的对象 Schema（包括嵌套业务对象）使用 `.meta({ id: 'User', title: 'User' })`：`id` 指定唯一模型名称，`title` 指定展示标题。Zod 将命名模型提取为 definitions，Swagger 原生转换为 `components.schemas` 和 `$ref`，无需额外后处理。不同 Schema 使用不同的 `id`；请求与响应结构不同时分别命名。查询参数和路径参数沿用现有声明方式，无需增加模型 `id`。
 
 ## 依赖兼容性
 

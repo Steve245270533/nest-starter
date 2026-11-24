@@ -23,6 +23,6 @@ export const CreateUserSchema = z
       .min(1, { error: '年龄不能小于1' })
       .describe('年龄'),
   })
-  .meta({ title: 'CreateUserRequest' });
+  .meta({ id: 'CreateUserRequest' });
 
 export type CreateUserDto = z.output<typeof CreateUserSchema>;

@@ -12,14 +12,14 @@ export const UserSchema = CreateUserSchema.extend({
   id: z.int32().positive(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-}).meta({ title: 'User' });
+}).meta({ id: 'User' });
 
 export const UserResponseSchema = responseSchema(UserSchema).meta({
-  title: 'UserResponse',
+  id: 'UserResponse',
 });
 export const UserPageResponseSchema = responseSchema(
-  paginationSchema(UserSchema).meta({ title: 'UserPage' }),
-).meta({ title: 'UserPageResponse' });
+  paginationSchema(UserSchema).meta({ id: 'UserPage' }),
+).meta({ id: 'UserPageResponse' });
 
 export type UserDto = z.output<typeof UserSchema>;
 

@@ -1,7 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { knife4jSetup } from 'nestjs-knife4j-plus';
-import { normalizeSchemas } from './normalize-schemas.js';
 
 export async function setupSwagger(app: INestApplication) {
   const options = new DocumentBuilder()
@@ -9,7 +8,7 @@ export async function setupSwagger(app: INestApplication) {
     .setVersion('1.0')
     .build();
   SwaggerModule.setup('swagger', app, () =>
-    normalizeSchemas(SwaggerModule.createDocument(app, options)),
+    SwaggerModule.createDocument(app, options),
   );
 
   await knife4jSetup(app, [{ name: 'Nest Starter API', url: '/swagger-json' }]);

@@ -10,7 +10,7 @@ const HelloQuerySchema = z.object({
   name: z.string().describe('用户名称').optional(),
 });
 const HelloResponseSchema = responseSchema(z.string()).meta({
-  title: 'HelloResponse',
+  id: 'HelloResponse',
 });
 
 @Controller()
