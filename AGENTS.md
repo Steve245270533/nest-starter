@@ -13,7 +13,7 @@
 - 技术栈：NestJS 12、TypeScript ESM、Zod 4、Prisma 7 / MySQL、Swagger / Knife4j、Winston；使用 pnpm，遵循现有依赖和配置。
 - 按业务组织 `src/<业务>/`，参照 `src/user/`；公共能力放在 `src/commons/`，数据库接入放在 `src/prisma/`。
 - Module 声明依赖与导出，Controller 处理路由、参数和响应，Service 承载业务及数据库操作；使用构造函数依赖注入，不手动实例化服务。
-- 本地模块导入保留 `.js` 后缀，纯类型使用 `import type`；命名和格式遵循现有代码、ESLint 与 Prettier。
+- 本地模块导入保留 `.js` 后缀，纯类型使用 `import type`；命名和格式遵循现有代码、Oxlint 与 Oxfmt。
 
 ## 代码约束
 

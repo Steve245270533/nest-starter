@@ -1,18 +1,21 @@
-import assert from 'node:assert/strict';
-import { after, before, describe, it } from 'node:test';
-import type { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
-import type { OpenAPIObject } from '@nestjs/swagger';
-import request from 'supertest';
-import { AppModule } from '../src/app.module.js';
-import { configureApp } from '../src/commons/configure-app.js';
-import { PrismaService } from '../src/prisma/prisma.service.js';
+import assert from "node:assert/strict";
+import { after, before, describe, it } from "node:test";
+
+import { Test } from "@nestjs/testing";
+import request from "supertest";
+
+import { AppModule } from "../src/app.module.js";
+import { configureApp } from "../src/commons/configure-app.js";
+import { PrismaService } from "../src/prisma/prisma.service.js";
 import {
   UserPageResponseSchema,
   UserResponseSchema,
-} from '../src/user/dto/user.dto.js';
+} from "../src/user/dto/user.dto.js";
 
-void describe('Nest starter (e2e)', () => {
+import type { INestApplication } from "@nestjs/common";
+import type { OpenAPIObject } from "@nestjs/swagger";
+
+void describe("Nest starter (e2e)", () => {
   let app: INestApplication<Parameters<typeof request>[0]>;
   let prisma: PrismaService;
   const testUserIds: number[] = [];
@@ -37,45 +40,45 @@ void describe('Nest starter (e2e)', () => {
     }
   });
 
-  void it('serves the existing hello endpoint', async () => {
+  void it("serves the existing hello endpoint", async () => {
     await request(app.getHttpServer())
-      .get('/api?name=world')
-      .expect(200, { code: 200, msg: 'success', data: 'hello world' });
+      .get("/api?name=world")
+      .expect(200, { code: 200, msg: "success", data: "hello world" });
   });
 
-  void it('validates, creates, reads, updates, and deletes a MySQL user', async () => {
+  void it("validates, creates, reads, updates, and deletes a MySQL user", async () => {
     const api = request(app.getHttpServer());
-    await api.post('/api/user').send({ name: '  ', age: 27 }).expect(400);
+    await api.post("/api/user").send({ name: "  ", age: 27 }).expect(400);
     await api
-      .post('/api/user')
-      .send({ name: 'Example', age: 27, id: 1 })
+      .post("/api/user")
+      .send({ name: "Example", age: 27, id: 1 })
       .expect(400);
-    await api.get('/api/user?pageSize=0').expect(400);
+    await api.get("/api/user?pageSize=0").expect(400);
     for (const query of [
-      'page=0',
-      'page=-1',
-      'page=1.5',
-      'page=invalid',
-      'pageSize=101',
-      'pageSize=1.5',
-      'pageSize=invalid',
-      'offset=0&limit=1',
+      "page=0",
+      "page=-1",
+      "page=1.5",
+      "page=invalid",
+      "pageSize=101",
+      "pageSize=1.5",
+      "pageSize=invalid",
+      "offset=0&limit=1",
     ]) {
       await api.get(`/api/user?${query}`).expect(400);
     }
-    await api.get('/api/user/invalid').expect(400);
+    await api.get("/api/user/invalid").expect(400);
 
     const created = await api
-      .post('/api/user')
-      .send({ name: '  Example  ', age: 27 })
+      .post("/api/user")
+      .send({ name: "  Example  ", age: 27 })
       .expect(201);
     const { data: user } = UserResponseSchema.parse(created.body);
     testUserIds.push(user.id);
-    assert.equal(user.name, 'Example');
+    assert.equal(user.name, "Example");
 
     const path = `/api/user/${user.id}`;
-    await api.get(path).expect(200, { code: 200, msg: 'success', data: user });
-    const page = await api.get('/api/user/all?pageSize=1&page=1').expect(200);
+    await api.get(path).expect(200, { code: 200, msg: "success", data: user });
+    const page = await api.get("/api/user/all?pageSize=1&page=1").expect(200);
     const {
       data: { list, total },
     } = UserPageResponseSchema.parse(page.body);
@@ -88,83 +91,83 @@ void describe('Nest starter (e2e)', () => {
     await api.delete(path).expect(204);
     await api
       .get(path)
-      .expect(404, { code: 404, msg: '用户不存在', data: null });
+      .expect(404, { code: 404, msg: "用户不存在", data: null });
     await api.patch(path).send({ age: 29 }).expect(404);
     await api.delete(path).expect(404);
   });
 
-  void it('applies pagination defaults and converts page numbers into offsets', async () => {
+  void it("applies pagination defaults and converts page numbers into offsets", async () => {
     const api = request(app.getHttpServer());
-    for (const name of ['Pagination A', 'Pagination B']) {
+    for (const name of ["Pagination A", "Pagination B"]) {
       const created = await api
-        .post('/api/user')
+        .post("/api/user")
         .send({ name, age: 27 })
         .expect(201);
       testUserIds.push(UserResponseSchema.parse(created.body).data.id);
     }
 
-    const defaults = await api.get('/api/user').expect(200);
-    const explicit = await api.get('/api/user?page=1&pageSize=20').expect(200);
+    const defaults = await api.get("/api/user").expect(200);
+    const explicit = await api.get("/api/user?page=1&pageSize=20").expect(200);
     assert.deepEqual(defaults.body, explicit.body);
 
     const firstTwo = UserPageResponseSchema.parse(
-      (await api.get('/api/user?page=1&pageSize=2').expect(200)).body,
+      (await api.get("/api/user?page=1&pageSize=2").expect(200)).body,
     ).data;
     const second = UserPageResponseSchema.parse(
-      (await api.get('/api/user/all?page=2&pageSize=1').expect(200)).body,
+      (await api.get("/api/user/all?page=2&pageSize=1").expect(200)).body,
     ).data;
     assert.equal(firstTwo.list.length, 2);
     assert.deepEqual(second.list, [firstTwo.list[1]]);
     assert.equal(second.total, firstTwo.total);
   });
 
-  void it('derives request and response documentation from the Zod schemas', async () => {
+  void it("derives request and response documentation from the Zod schemas", async () => {
     const result = await request(app.getHttpServer())
-      .get('/swagger-json')
+      .get("/swagger-json")
       .expect(200);
     const document = result.body as OpenAPIObject;
     // Assert schema semantics regardless of whether they are inline or referenced.
     const paths = JSON.parse(
       JSON.stringify(document.paths, (_key, value: unknown) => {
-        if (value && typeof value === 'object' && '$ref' in value) {
+        if (value && typeof value === "object" && "$ref" in value) {
           const ref = String(value.$ref);
-          const prefix = '#/components/schemas/';
+          const prefix = "#/components/schemas/";
           if (ref.startsWith(prefix)) {
             return document.components?.schemas?.[ref.slice(prefix.length)];
           }
         }
         return value;
       }),
-    ) as OpenAPIObject['paths'];
+    ) as OpenAPIObject["paths"];
     assert.partialDeepStrictEqual(paths, {
-      '/api': {
-        get: { parameters: [{ name: 'name', required: false, in: 'query' }] },
+      "/api": {
+        get: { parameters: [{ name: "name", required: false, in: "query" }] },
       },
-      '/api/user': {
+      "/api/user": {
         post: {
           requestBody: {
             content: {
-              'application/json': {
+              "application/json": {
                 schema: {
-                  required: ['name', 'age'],
+                  required: ["name", "age"],
                   properties: {
-                    name: { type: 'string', minLength: 1, maxLength: 100 },
-                    age: { type: 'integer', minimum: 1 },
+                    name: { type: "string", minLength: 1, maxLength: 100 },
+                    age: { type: "integer", minimum: 1 },
                   },
                 },
               },
             },
           },
           responses: {
-            '201': {
+            "201": {
               content: {
-                'application/json': {
+                "application/json": {
                   schema: {
                     properties: {
                       data: {
                         properties: {
-                          id: { type: 'integer' },
-                          createdAt: { format: 'date-time' },
+                          id: { type: "integer" },
+                          createdAt: { format: "date-time" },
                         },
                       },
                     },
@@ -177,30 +180,30 @@ void describe('Nest starter (e2e)', () => {
         get: {
           parameters: [
             {
-              name: 'page',
+              name: "page",
               required: false,
-              schema: { type: 'integer', minimum: 1, default: 1 },
+              schema: { type: "integer", minimum: 1, default: 1 },
             },
             {
-              name: 'pageSize',
+              name: "pageSize",
               required: false,
-              schema: { type: 'integer', maximum: 100, default: 20 },
+              schema: { type: "integer", maximum: 100, default: 20 },
             },
           ],
         },
       },
-      '/api/user/{id}': {
+      "/api/user/{id}": {
         patch: {
           parameters: [
             {
-              name: 'id',
-              in: 'path',
+              name: "id",
+              in: "path",
               required: true,
-              schema: { type: 'integer', minimum: 1 },
+              schema: { type: "integer", minimum: 1 },
             },
           ],
           requestBody: {
-            content: { 'application/json': { schema: { minProperties: 1 } } },
+            content: { "application/json": { schema: { minProperties: 1 } } },
           },
         },
       },

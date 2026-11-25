@@ -1,7 +1,8 @@
-import { NestFactory } from '@nestjs/core';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import { AppModule } from './app.module.js';
-import { configureApp } from './commons/configure-app.js';
+import { NestFactory } from "@nestjs/core";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+
+import { AppModule } from "./app.module.js";
+import { configureApp } from "./commons/configure-app.js";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

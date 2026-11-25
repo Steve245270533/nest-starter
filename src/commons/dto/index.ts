@@ -1,9 +1,9 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export function responseSchema<T extends z.ZodType>(data: T) {
   return z.object({
-    code: z.number().int().describe('状态码'),
-    msg: z.string().describe('消息'),
+    code: z.number().int().describe("状态码"),
+    msg: z.string().describe("消息"),
     data,
   });
 }

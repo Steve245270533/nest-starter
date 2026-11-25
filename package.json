@@ -7,12 +7,12 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "oxfmt --write src test prisma.config.ts",
     "start": "nest start",
     "start:dev": "cross-env NODE_ENV=development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "cross-env NODE_ENV=production node dist/src/main.js",
-    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\" prisma.config.ts",
+    "lint": "oxlint src test prisma.config.ts && pnpm format:check",
     "test": "tsc -p tsconfig.test.json && node --test \"dist-test/test/**/*.spec.js\"",
     "test:watch": "tsc -p tsconfig.test.json && node --test --watch \"dist-test/test/**/*.spec.js\"",
     "test:cov": "tsc -p tsconfig.test.json && node --test --experimental-test-coverage \"dist-test/test/**/*.spec.js\"",
@@ -21,7 +21,9 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy"
+    "db:deploy": "prisma migrate deploy",
+    "format:check": "oxfmt --check src test prisma.config.ts",
+    "lint:fix": "oxlint --fix src test prisma.config.ts && pnpm format"
   },
   "dependencies": {
     "@nestjs/common": "^12.6.0",
@@ -44,8 +46,6 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.3.7",
-    "@eslint/js": "^10.0.1",
     "@nestjs/cli": "^12.0.15",
     "@nestjs/schematics": "^12.0.16",
     "@nestjs/testing": "^12.5.1",
@@ -54,16 +54,13 @@
     "@types/express": "^5.0.6",
     "@types/node": "^24.19.2",
     "@types/supertest": "^7.2.1",
-    "eslint": "^10.15.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.7",
-    "globals": "^17.14.0",
-    "prettier": "^3.10.1",
+    "oxfmt": "^0.80.0",
+    "oxlint": "^1.95.0",
+    "oxlint-tsgolint": "^7.0.2008",
     "prisma": "7.10.1",
     "source-map-support": "^0.5.21",
     "supertest": "^7.3.2",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.74.0",
     "webpack": "^5.113.0"
   },
   "type": "module",

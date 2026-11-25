@@ -1,11 +1,10 @@
-import {
-  Injectable,
-  type OnModuleDestroy,
-  type OnModuleInit,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { PrismaMariaDb } from '@prisma/adapter-mariadb';
-import { PrismaClient } from '../../prisma/generated/client.js';
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+
+import { PrismaClient } from "../../prisma/generated/client.js";
+
+import type { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 
 @Injectable()
 export class PrismaService
@@ -14,7 +13,7 @@ export class PrismaService
 {
   constructor(config: ConfigService) {
     super({
-      adapter: new PrismaMariaDb(config.getOrThrow<string>('DATABASE_URL')),
+      adapter: new PrismaMariaDb(config.getOrThrow<string>("DATABASE_URL")),
     });
   }
 

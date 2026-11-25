@@ -3,16 +3,18 @@ import {
   StandardSchemaValidationPipe,
   VERSION_NEUTRAL,
   VersioningType,
-  type INestApplication,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import type { Configuration } from './config/configuration.js';
-import { HttpExceptionsFilter } from './filters/http-exception/http-exception.filter.js';
-import { setupSwagger } from './swagger/setupSwagger.js';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+
+import { HttpExceptionsFilter } from "./filters/http-exception/http-exception.filter.js";
+import { setupSwagger } from "./swagger/setupSwagger.js";
+
+import type { Configuration } from "./config/configuration.js";
+import type { INestApplication } from "@nestjs/common";
 
 export async function configureApp(app: INestApplication) {
   const config = app.get<ConfigService<Configuration>>(ConfigService);
-  const settings = config.getOrThrow('app', { infer: true });
+  const settings = config.getOrThrow("app", { infer: true });
 
   if (settings.cors) app.enableCors();
   app.setGlobalPrefix(settings.prefix);
@@ -24,7 +26,7 @@ export async function configureApp(app: INestApplication) {
   app.useGlobalPipes(
     new StandardSchemaValidationPipe({
       exceptionFactory: (issues) =>
-        new BadRequestException(issues[0]?.message ?? '请求参数校验失败'),
+        new BadRequestException(issues[0]?.message ?? "请求参数校验失败"),
     }),
   );
   await setupSwagger(app);

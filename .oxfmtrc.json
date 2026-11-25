@@ -1,0 +1,33 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": false,
+  "trailingComma": "all",
+  "printWidth": 80,
+  "endOfLine": "lf",
+  "sortImports": {
+    "sortSideEffects": false,
+    "groups": [
+      "builtin",
+      "external",
+      [
+        "internal",
+        "subpath"
+      ],
+      [
+        "parent",
+        "sibling",
+        "index"
+      ],
+      "style",
+      "unknown",
+      "type"
+    ]
+  },
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "prisma/generated/**",
+    "dist/**",
+    "dist-test/**",
+    "pnpm-lock.yaml"
+  ]
+}

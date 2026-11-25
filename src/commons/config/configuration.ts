@@ -1,5 +1,5 @@
-import config from 'config';
-import { z } from 'zod';
+import config from "config";
+import { z } from "zod";
 
 const AppConfigSchema = z.object({
   name: z.string(),
@@ -14,5 +14,5 @@ export interface Configuration {
 }
 
 export default function configuration(): Configuration {
-  return { app: AppConfigSchema.parse(config.get('app')) };
+  return { app: AppConfigSchema.parse(config.get("app")) };
 }

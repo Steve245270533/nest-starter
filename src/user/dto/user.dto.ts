@@ -1,6 +1,7 @@
-import { z } from 'zod';
-import { paginationSchema, responseSchema } from '../../commons/dto/index.js';
-import { CreateUserSchema } from './create-user.dto.js';
+import { z } from "zod";
+
+import { paginationSchema, responseSchema } from "../../commons/dto/index.js";
+import { CreateUserSchema } from "./create-user.dto.js";
 
 export const UserIdSchema = z.coerce
   .number<string>()
@@ -12,14 +13,14 @@ export const UserSchema = CreateUserSchema.extend({
   id: z.int32().positive(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
-}).meta({ id: 'User' });
+}).meta({ id: "User" });
 
 export const UserResponseSchema = responseSchema(UserSchema).meta({
-  id: 'UserResponse',
+  id: "UserResponse",
 });
 export const UserPageResponseSchema = responseSchema(
-  paginationSchema(UserSchema).meta({ id: 'UserPage' }),
-).meta({ id: 'UserPageResponse' });
+  paginationSchema(UserSchema).meta({ id: "UserPage" }),
+).meta({ id: "UserPageResponse" });
 
 export type UserDto = z.output<typeof UserSchema>;
 

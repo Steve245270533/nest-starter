@@ -1,10 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, type User } from '../../prisma/generated/client.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import type { CreateUserDto } from './dto/create-user.dto.js';
-import type { UpdateUserDto } from './dto/update-user.dto.js';
-import type { UserQueryDto } from './dto/user-query.dto.js';
-import type { UserDto } from './dto/user.dto.js';
+import { Injectable, NotFoundException } from "@nestjs/common";
+
+import { Prisma } from "../../prisma/generated/client.js";
+import { PrismaService } from "../prisma/prisma.service.js";
+
+import type { User } from "../../prisma/generated/client.js";
+import type { CreateUserDto } from "./dto/create-user.dto.js";
+import type { UpdateUserDto } from "./dto/update-user.dto.js";
+import type { UserQueryDto } from "./dto/user-query.dto.js";
+import type { UserDto } from "./dto/user.dto.js";
 
 @Injectable()
 export class UserService {
@@ -20,7 +23,7 @@ export class UserService {
         this.prisma.user.findMany({
           skip: (page - 1) * pageSize,
           take: pageSize,
-          orderBy: { id: 'asc' },
+          orderBy: { id: "asc" },
         }),
         this.prisma.user.count(),
       ],
@@ -54,9 +57,9 @@ export class UserService {
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
+        error.code === "P2025"
       ) {
-        throw new NotFoundException('用户不存在');
+        throw new NotFoundException("用户不存在");
       }
       throw error;
     }
